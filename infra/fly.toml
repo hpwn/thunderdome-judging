@@ -1,0 +1,25 @@
+app = "thunderdome-api"
+primary_region = "iad"
+
+[build]
+  image = "registry.fly.io/thunderdome-api"
+
+[env]
+  HOST = "0.0.0.0"
+  PORT = "8080"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    interval = 15000
+    timeout = 2000

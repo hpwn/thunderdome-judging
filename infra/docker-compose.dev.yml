@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  api:
+    image: node:20
+    working_dir: /workspace/api
+    command: >-
+      sh -c "corepack enable pnpm && pnpm install && pnpm dev"
+    volumes:
+      - ..:/workspace
+    ports:
+      - '8080:8080'
+    environment:
+      PNPM_HOME: /root/.local/share/pnpm
+      NODE_ENV: development
+
+  web:
+    image: node:20
+    working_dir: /workspace/web
+    command: >-
+      sh -c "corepack enable pnpm && pnpm install && pnpm dev -- --hostname 0.0.0.0"
+    volumes:
+      - ..:/workspace
+    ports:
+      - '3000:3000'
+    environment:
+      PNPM_HOME: /root/.local/share/pnpm
+      NODE_ENV: development
+    depends_on:
+      - api
