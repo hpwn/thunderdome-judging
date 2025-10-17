@@ -26,11 +26,13 @@ Monorepo scaffold for the Thunderdome judging platform. It includes the Next.js 
    ```bash
    pnpm install
    ```
-3. Copy `.env.example` to `.env` and fill in secrets.
-4. Start the dev servers (web at :3000, API at :8080):
+3. Copy `.env.example` to `.env` and fill in secrets. For local overrides, also copy `api/.env.example` → `api/.env` and `web/.env.local.example` → `web/.env.local`.
+4. Start the dev servers (web at :3000, API defaults to :8888):
    ```bash
    pnpm dev
    ```
+
+   The API reads `PORT` from `api/.env`. Change it (for example, `PORT=9999`) and restart to move the server without touching code. When testing from another device on your LAN, point `NEXT_PUBLIC_API_URL`/`NEXT_PUBLIC_WS_URL` in `web/.env.local` at your host IP (for example, `http://192.168.0.160:8888`).
 
 ### Useful scripts
 
