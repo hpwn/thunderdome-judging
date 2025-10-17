@@ -1,0 +1,7 @@
+openapi: 3.1.0
+info:
+  title: Thunderdome Judging API
+  version: 0.1.0
+  description: |
+    Placeholder specification for the Fastify API. Define REST and WebSocket contracts here as endpoints mature.
+paths: {}

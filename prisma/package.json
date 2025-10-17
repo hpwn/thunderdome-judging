@@ -1,0 +1,15 @@
+{
+  "name": "@thunderdome/prisma",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "echo 'No dev server for prisma workspace'",
+    "lint": "echo 'No lint step for prisma workspace'",
+    "typecheck": "echo 'No typecheck step for prisma workspace'",
+    "build": "echo 'No build step for prisma workspace'",
+    "test": "echo 'No tests for prisma workspace'"
+  },
+  "devDependencies": {
+    "prisma": "^5.16.1"
+  }
+}
