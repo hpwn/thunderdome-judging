@@ -30,7 +30,6 @@ coverage/
 Thumbs.db
 
 # Prisma artifacts
-prisma/migrations/
 prisma/*.db
 
 # Data files
