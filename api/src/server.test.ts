@@ -1,5 +1,5 @@
-import { vi } from "vitest";
-vi.mock("node:child_process", () => ({ execSync: () => Buffer.from("") }));
+import { vi } from 'vitest';
+vi.mock('node:child_process', () => ({ execSync: () => Buffer.from('') }));
 import { beforeAll, afterAll, beforeEach, afterEach, describe, expect, it } from 'vitest';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import request from 'supertest';
