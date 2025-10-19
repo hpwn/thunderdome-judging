@@ -1,11 +1,13 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": false,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
+    "outDir": "dist",
+    "module": "CommonJS",
+    "target": "ES2022",
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts", "**/__tests__/**"]
+  "include": ["src/**/*.ts", "types/**/*.d.ts"],
+  "exclude": ["**/*.test.ts"]
 }
