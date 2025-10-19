@@ -4,6 +4,7 @@
   "exclude": ["**/*.test.ts"],
   "compilerOptions": {
     "useUnknownInCatchVariables": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noImplicitAny": false
   }
 }

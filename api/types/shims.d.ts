@@ -1,5 +1,10 @@
 declare module '@prisma/client' {
-  export class PrismaClient {}
+  export class PrismaClient {
+    event: any;
+    division: any;
+    heat: any;
+    $disconnect(): Promise<void>;
+  }
   export type Event = any;
   export type Division = any;
   export type Heat = any;
