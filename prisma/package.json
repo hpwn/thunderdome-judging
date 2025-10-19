@@ -9,7 +9,14 @@
     "build": "echo 'No build step for prisma workspace'",
     "test": "echo 'No tests for prisma workspace'"
   },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
   "devDependencies": {
-    "prisma": "^5.16.1"
+    "prisma": "^5.22.0"
+  },
+  "prisma": {
+    "schema": "schema.pg.prisma",
+    "seed": "node prisma/seed.mjs"
   }
 }
