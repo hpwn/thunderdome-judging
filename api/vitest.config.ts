@@ -9,6 +9,7 @@ export default defineConfig({
     alias: {
       '@prisma/client': fileURLToPath(new URL('./test/shims/prisma.ts', import.meta.url)),
       'zod': fileURLToPath(new URL('./test/shims/zod.ts', import.meta.url)),
+      '@testcontainers/postgresql': fileURLToPath(new URL('./test/shims/testcontainers-postgresql.ts', import.meta.url)),
     }
   }
 });
