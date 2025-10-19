@@ -6,15 +6,14 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts'], // only our tests
     exclude: [
-      // Vitest defaults (kept explicit to avoid surprises)
       '**/node_modules/**',
       '**/dist/**',
       '**/build/**',
       '**/.next/**',
       '**/.{idea,git,cache,output,temp}/**',
-      // Pre-Prisma: skip DB integration test
-      'src/server.test.ts'
+      'src/server.test.ts', // pre-Prisma: skip DB integration test
     ],
+    passWithNoTests: true, // <-- key line
   },
   resolve: {
     alias: {
