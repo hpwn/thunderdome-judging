@@ -1,5 +1,9 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/index.ts"],
-  "exclude": ["**/*.test.ts"]
+  "include": ["src/index.ts", "types/**/*.d.ts"],
+  "exclude": ["**/*.test.ts"],
+  "compilerOptions": {
+    "useUnknownInCatchVariables": false,
+    "skipLibCheck": true
+  }
 }
