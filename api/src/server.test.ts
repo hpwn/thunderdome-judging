@@ -1,7 +1,5 @@
-import { vi } from 'vitest';
-vi.mock('node:child_process', () => ({ execSync: () => Buffer.from('') }));
 import { beforeAll, afterAll, beforeEach, afterEach, describe, expect, it } from 'vitest';
-import { PostgreSqlContainer } from '@testcontainers/postgresql';
+import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import request from 'supertest';
 import { buildServer } from './server.js';
 import { execSync } from 'node:child_process';
@@ -9,8 +7,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import type { FastifyInstance } from 'fastify';
 import type { PrismaClient } from '@prisma/client';
+import { DivisionName } from '@prisma/client';
 
-let container: PostgreSqlContainer | undefined;
+let container: StartedPostgreSqlContainer | undefined;
 let app: FastifyInstance | undefined;
 let prisma: PrismaClient | undefined;
 let skipSuite = false;
@@ -23,14 +22,14 @@ async function clearDatabase() {
   }
 
   await prisma.score.deleteMany();
-  await prisma.placement.deleteMany();
   await prisma.run.deleteMany();
-  await prisma.heat.deleteMany();
+  await prisma.placement.deleteMany();
+  await prisma.entry.deleteMany();
   await prisma.judge.deleteMany();
-  await prisma.skater.deleteMany();
+  await prisma.heat.deleteMany();
   await prisma.division.deleteMany();
-  await prisma.auditLog.deleteMany();
   await prisma.event.deleteMany();
+  await prisma.skater.deleteMany();
 }
 
 beforeAll(async function () {
@@ -40,12 +39,13 @@ beforeAll(async function () {
     process.env.DATABASE_URL = externalDatabaseUrl;
   } else {
     try {
-      container = await new PostgreSqlContainer('postgres:16-alpine')
+      const startedContainer = await new PostgreSqlContainer('postgres:16-alpine')
         .withDatabase('thunderdome')
         .withUsername('postgres')
         .withPassword('postgres')
         .start();
-      process.env.DATABASE_URL = container.getConnectionUri();
+      container = startedContainer;
+      process.env.DATABASE_URL = startedContainer.getConnectionUri();
     } catch (error) {
       if (
         error instanceof Error &&
@@ -60,7 +60,7 @@ beforeAll(async function () {
     }
   }
 
-  execSync('pnpm db:migrate:pg', {
+  execSync('pnpm db:migrate:deploy', {
     cwd: rootDir,
     env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL },
     stdio: 'inherit',
@@ -153,7 +153,7 @@ describe('events API', () => {
         venue: 'Los Angeles',
         divisions: {
           create: {
-            name: 'Pro Division',
+            name: DivisionName.PRO,
             order: 1,
             heats: {
               create: [
@@ -179,7 +179,7 @@ describe('events API', () => {
       name: 'Qualifier',
       divisions: [
         {
-          name: 'Pro Division',
+          name: DivisionName.PRO,
           heats: [
             expect.objectContaining({ name: 'Heat A' }),
             expect.objectContaining({ name: 'Heat B' }),
@@ -244,8 +244,8 @@ describe('divisions API', () => {
         name: 'Qualifier',
         divisions: {
           create: [
-            { name: 'Amateur', order: 1 },
-            { name: 'Pro', order: 2 },
+            { name: DivisionName.BEGINNER, order: 1 },
+            { name: DivisionName.PRO, order: 2 },
           ],
         },
       },
@@ -255,8 +255,8 @@ describe('divisions API', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
-    expect(response.body[0]).toMatchObject({ name: 'Amateur' });
-    expect(response.body[1]).toMatchObject({ name: 'Pro' });
+    expect(response.body[0]).toMatchObject({ name: DivisionName.BEGINNER });
+    expect(response.body[1]).toMatchObject({ name: DivisionName.PRO });
   });
 });
 
@@ -271,7 +271,7 @@ describe('heats API', () => {
         name: 'Qualifier',
         divisions: {
           create: {
-            name: 'Pro',
+            name: DivisionName.PRO,
             heats: {
               create: [
                 { name: 'Heat 1', order: 1 },

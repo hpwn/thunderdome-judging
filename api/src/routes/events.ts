@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import {
   createEvent,
@@ -9,11 +10,15 @@ import {
 } from '../repositories/eventRepository.js';
 import { serializeEvent } from './serializers.js';
 
+const jsonValueSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() =>
+  z.union([z.string(), z.number(), z.boolean(), z.array(jsonValueSchema), z.record(jsonValueSchema)])
+);
+
 const eventCreateSchema = z.object({
   name: z.string().min(1),
   startDate: z.union([z.string().datetime({ offset: true }), z.null()]).optional(),
   venue: z.union([z.string().min(1), z.null()]).optional(),
-  config: z.record(z.unknown()).optional(),
+  config: z.union([jsonValueSchema, z.null()]).optional(),
 });
 
 const eventUpdateSchema = eventCreateSchema
@@ -23,7 +28,7 @@ const eventUpdateSchema = eventCreateSchema
   });
 
 const eventParamsSchema = z.object({
-  eventId: z.string().uuid(),
+  eventId: z.string().cuid(),
 });
 
 const toDateOrNull = (value: string | null | undefined) =>

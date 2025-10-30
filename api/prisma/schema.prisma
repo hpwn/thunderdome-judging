@@ -1,0 +1,162 @@
+// This schema defines the initial judging domain models.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DivisionName {
+  BEGINNER
+  INTERMEDIATE
+  PRO
+  MASTERS
+  WOMENS
+  OTHER
+}
+
+enum JudgeRole {
+  TECHNICALITY
+  AESTHETICS
+  COMPOSITION
+}
+
+enum ScoreCategory {
+  TECHNICALITY
+  AESTHETICS
+  COMPOSITION
+}
+
+model Event {
+  id        String   @id @default(cuid())
+  name      String
+  startDate DateTime?
+  venue     String?
+  config    Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  divisions  Division[]
+  entries    Entry[]
+  judges     Judge[]
+  placements Placement[]
+}
+
+model Division {
+  id        String       @id @default(cuid())
+  event     Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   String
+  name      DivisionName
+  order     Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  heats      Heat[]
+  entries    Entry[]
+  placements Placement[]
+
+  @@index([eventId, order])
+}
+
+model Heat {
+  id         String    @id @default(cuid())
+  division   Division  @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+  divisionId String
+  name       String
+  order      Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  runs Run[]
+
+  @@index([divisionId, order])
+}
+
+model Skater {
+  id      String  @id @default(cuid())
+  name    String
+  country String?
+  sponsor String?
+
+  entries Entry[]
+}
+
+model Entry {
+  id         String   @id @default(cuid())
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId    String
+  division   Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+  divisionId String
+  skater     Skater   @relation(fields: [skaterId], references: [id], onDelete: Cascade)
+  skaterId   String
+  bibNumber  Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  runs       Run[]
+  placements Placement[]
+
+  @@unique([eventId, divisionId, skaterId])
+}
+
+model Judge {
+  id        String   @id @default(cuid())
+  name      String
+  role      JudgeRole
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scores Score[]
+}
+
+model Run {
+  id        String   @id @default(cuid())
+  entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  entryId   String
+  heat      Heat     @relation(fields: [heatId], references: [id], onDelete: Cascade)
+  heatId    String
+  index     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scores Score[]
+
+  @@unique([entryId, index])
+}
+
+model Score {
+  id        String        @id @default(cuid())
+  run       Run           @relation(fields: [runId], references: [id], onDelete: Cascade)
+  runId     String
+  judge     Judge         @relation(fields: [judgeId], references: [id], onDelete: Cascade)
+  judgeId   String
+  category  ScoreCategory
+  value     Decimal
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@unique([runId, judgeId, category])
+}
+
+model Placement {
+  id           String   @id @default(cuid())
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId      String
+  division     Division @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+  divisionId   String
+  entry        Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  entryId      String
+  rank         Int
+  tiebreakInfo Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([eventId, divisionId, rank])
+  @@unique([divisionId, entryId])
+}

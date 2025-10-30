@@ -4,7 +4,7 @@ import { listDivisions } from '../repositories/divisionRepository.js';
 import { serializeDivision } from './serializers.js';
 
 const querySchema = z.object({
-  eventId: z.string().uuid().optional(),
+  eventId: z.string().cuid().optional(),
 });
 
 export async function registerDivisionRoutes(app: FastifyInstance) {

@@ -4,8 +4,8 @@ import { listHeats } from '../repositories/heatRepository.js';
 import { serializeHeat } from './serializers.js';
 
 const querySchema = z.object({
-  divisionId: z.string().uuid().optional(),
-  eventId: z.string().uuid().optional(),
+  divisionId: z.string().cuid().optional(),
+  eventId: z.string().cuid().optional(),
 });
 
 export async function registerHeatRoutes(app: FastifyInstance) {
