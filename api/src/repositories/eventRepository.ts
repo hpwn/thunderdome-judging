@@ -6,7 +6,7 @@ export type EventCreateInput = {
   name: string;
   startDate?: Date | null;
   venue?: string | null;
-  config?: Prisma.JsonValue | null;
+  config?: Prisma.InputJsonValue | null;
 };
 
 export type EventUpdateInput = Partial<EventCreateInput>;
@@ -37,9 +37,11 @@ export async function createEvent(input: EventCreateInput) {
   return prisma.event.create({
     data: {
       name: input.name,
-      startDate: input.startDate ?? null,
-      venue: input.venue ?? null,
-      config: input.config ?? null,
+      ...(input.startDate !== undefined ? { startDate: input.startDate } : {}),
+      ...(input.venue !== undefined ? { venue: input.venue } : {}),
+      ...(input.config !== undefined
+        ? { config: input.config === null ? Prisma.DbNull : input.config }
+        : {}),
     },
   });
 }
@@ -52,7 +54,9 @@ export async function updateEvent(id: string, input: EventUpdateInput) {
         ...(input.name !== undefined ? { name: input.name } : {}),
         ...(input.startDate !== undefined ? { startDate: input.startDate } : {}),
         ...(input.venue !== undefined ? { venue: input.venue } : {}),
-        ...(input.config !== undefined ? { config: input.config } : {}),
+        ...(input.config !== undefined
+          ? { config: input.config === null ? Prisma.DbNull : input.config }
+          : {}),
       },
     });
   } catch (error) {

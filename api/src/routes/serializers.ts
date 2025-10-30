@@ -15,7 +15,6 @@ export function serializeHeat(heat: Heat) {
     divisionId: heat.divisionId,
     name: heat.name,
     order: heat.order,
-    status: heat.status,
     createdAt: heat.createdAt.toISOString(),
     updatedAt: heat.updatedAt.toISOString(),
   };
